@@ -14,29 +14,40 @@ show_header() {
     local datetime
 
     hostname=$(hostname)
-
     username=$(whoami)
-
-    os=$(grep "^PRETTY_NAME=" /etc/os-release | cut -d= -f2 | tr -d '"')
-
     kernel=$(uname -r)
-
     uptime=$(uptime -p)
+    datetime=$(date "+%d-%b-%Y %H:%M:%S")
 
-    datetime=$(date "+%d-%b-%Y %I:%M:%S %p")
+    if [[ -f /etc/os-release ]]; then
+        os=$(grep "^PRETTY_NAME=" /etc/os-release | cut -d= -f2 | tr -d '"')
+    else
+        os="Unknown"
+    fi
 
-    printf "\n"
+    clear
 
-    printf "=========================================================================\n"
-    printf "                           INFRAPULSE DASHBOARD\n"
-    printf "=========================================================================\n"
+    printf "${BRIGHT_CYAN}${BOLD}"
+    cat <<'EOF'
+   ___        __            ____        __
+  / _ \____  / /________ _ / __ \__  __/ /_______
+ / ___/ __ \/ __/ ___/  ' / /_/ / / / / / ___/ _ \
+/ /  / / / / /_/ /  / /| / ____/ /_/ / (__  )  __/
+/_/  /_/ /_/\__/_/  /_/ |_/_/    \__,_/_/____/\___/
 
-    printf "%-18s : %s\n" "Hostname" "$hostname"
-    printf "%-18s : %s\n" "User" "$username"
-    printf "%-18s : %s\n" "Operating System" "$os"
-    printf "%-18s : %s\n" "Kernel" "$kernel"
-    printf "%-18s : %s\n" "System Uptime" "$uptime"
-    printf "%-18s : %s\n" "Generated At" "$datetime"
+EOF
+    printf "${RESET}"
 
-    printf "\n"
+    printf "${BOLD}InfraPulse Linux Infrastructure Monitoring Platform${RESET}\n\n"
+
+    section_title "SYSTEM INFORMATION"
+
+    print_row "Hostname" "${BRIGHT_GREEN}${hostname}${RESET}"
+    print_row "User" "${BRIGHT_GREEN}${username}${RESET}"
+    print_row "Operating System" "$os"
+    print_row "Kernel" "$kernel"
+    print_row "System Uptime" "$uptime"
+    print_row "Generated At" "$datetime"
+
+    echo
 }

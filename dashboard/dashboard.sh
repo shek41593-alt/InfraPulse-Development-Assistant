@@ -2,24 +2,15 @@
 
 ###############################################################################
 # InfraPulse Dashboard
-# Main Controller
 ###############################################################################
 
 set -euo pipefail
 
-# -----------------------------------------------------------------------------
-# Project Directories
-# -----------------------------------------------------------------------------
-
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
 DASHBOARD_DIR="$ROOT_DIR/dashboard"
 
-# -----------------------------------------------------------------------------
-# Verify Required Files
-# -----------------------------------------------------------------------------
-
 required_files=(
+    colors.sh
     header.sh
     system_panel.sh
     service_panel.sh
@@ -28,21 +19,18 @@ required_files=(
     footer.sh
 )
 
-for file in "${required_files[@]}"
-do
+for file in "${required_files[@]}"; do
     if [[ ! -f "$DASHBOARD_DIR/$file" ]]; then
-        echo
-        echo "[ERROR] Missing dashboard component:"
-        echo "$file"
-        echo
+        echo "[ERROR] Missing $file"
         exit 1
     fi
 done
 
-# -----------------------------------------------------------------------------
+###############################################################################
 # Load Components
-# -----------------------------------------------------------------------------
+###############################################################################
 
+source "$DASHBOARD_DIR/colors.sh"
 source "$DASHBOARD_DIR/header.sh"
 source "$DASHBOARD_DIR/system_panel.sh"
 source "$DASHBOARD_DIR/service_panel.sh"
@@ -50,24 +38,17 @@ source "$DASHBOARD_DIR/security_panel.sh"
 source "$DASHBOARD_DIR/log_panel.sh"
 source "$DASHBOARD_DIR/footer.sh"
 
-# -----------------------------------------------------------------------------
-# Dashboard
-# -----------------------------------------------------------------------------
+###############################################################################
+# Main
+###############################################################################
 
 main() {
-
     clear
-
     show_header
-
     show_system_panel
-
     show_service_panel
-
     show_security_panel
-
     show_log_panel
-
     show_footer
 }
 

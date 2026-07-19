@@ -1,65 +1,88 @@
 #!/usr/bin/env bash
 
 ###############################################################################
-# InfraPulse Dashboard - System Panel
+# InfraPulse Dashboard - Enhanced System Panel
 ###############################################################################
+
+progress_bar() {
+
+    local value=$1
+    local width=30
+
+    local filled=$((value * width / 100))
+    local empty=$((width - filled))
+
+    printf "["
+
+    for ((i=0; i<filled; i++)); do
+        printf "#"
+    done
+
+    for ((i=0; i<empty; i++)); do
+        printf "-"
+    done
+
+    printf "] %3d%%" "$value"
+}
+
+health_status() {
+
+    local value=$1
+
+    if (( value < 70 )); then
+        status_color "HEALTHY"
+
+    elif (( value < 90 )); then
+        status_color "WARNING"
+
+    else
+        status_color "CRITICAL"
+    fi
+}
 
 show_system_panel() {
 
-    local cpu_usage
-    local mem_usage
-    local disk_usage
-    local network_status
+    local cpu
+    local mem
+    local disk
 
-    ##########################################################
-    # CPU Usage
-    ##########################################################
+    ############################################################
+    # CPU
+    ############################################################
 
-    cpu_usage=$(top -bn1 | awk '/Cpu\(s\)/ {
-        printf "%.0f", 100 - $8
-    }')
+    cpu=$(top -bn1 | awk '/Cpu\(s\)/ {printf "%.0f",100-$8}')
 
-    ##########################################################
-    # Memory Usage
-    ##########################################################
+    ############################################################
+    # Memory
+    ############################################################
 
-    mem_usage=$(free | awk '/Mem:/ {
-        printf "%.0f", ($3/$2)*100
-    }')
+    mem=$(free | awk '/Mem:/ {printf "%.0f",($3/$2)*100}')
 
-    ##########################################################
-    # Disk Usage (/)
-    ##########################################################
+    ############################################################
+    # Disk
+    ############################################################
 
-    disk_usage=$(df -h / | awk 'NR==2 {
-        print $5
-    }')
+    disk=$(df / | awk 'NR==2 {gsub("%","",$5); print $5}')
 
-    ##########################################################
-    # Network Status
-    ##########################################################
+    section_title "SYSTEM STATUS"
 
-    if ping -c1 -W1 8.8.8.8 >/dev/null 2>&1
-    then
-        network_status="Connected"
-    else
-        network_status="Disconnected"
-    fi
-
-    ##########################################################
-
-    printf "=========================================================\n"
-    printf "SYSTEM STATUS\n"
-    printf "=========================================================\n"
-
-    printf "%-22s : %s%%\n" "CPU Usage" "$cpu_usage"
-
-    printf "%-22s : %s%%\n" "Memory Usage" "$mem_usage"
-
-    printf "%-22s : %s\n" "Disk Usage (/)" "$disk_usage"
-
-    printf "%-22s : %s\n" "Network" "$network_status"
-
+    printf "%-12s " "CPU"
+    progress_bar "$cpu"
+    printf "   "
+    health_status "$cpu"
     printf "\n"
 
+    printf "%-12s " "Memory"
+    progress_bar "$mem"
+    printf "   "
+    health_status "$mem"
+    printf "\n"
+
+    printf "%-12s " "Disk"
+    progress_bar "$disk"
+    printf "   "
+    health_status "$disk"
+    printf "\n"
+
+    echo
 }
