@@ -1,7 +1,19 @@
+# Ignore log directory
 logs/
-reports/
+
+# Ignore generated reports only
+reports/*.html
+reports/*.json
+reports/*.csv
+reports/latest/
+
+# Ignore log files
 *.log
+
+# Temporary files
 *.tmp
 *.swp
 *.bak
+
+# macOS
 .DS_Store
