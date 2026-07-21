@@ -1,13 +1,18 @@
-# Ignore log directory
-logs/
+# Secret configuration files
+config/slack.conf
+config/discord.conf
+config/telegram.conf
+config/email.conf
 
-# Ignore generated reports only
+# Generated reports
 reports/*.html
 reports/*.json
 reports/*.csv
+reports/archive/
 reports/latest/
 
-# Ignore log files
+# Logs
+logs/
 *.log
 
 # Temporary files
@@ -15,5 +20,4 @@ reports/latest/
 *.swp
 *.bak
 
-# macOS
 .DS_Store
