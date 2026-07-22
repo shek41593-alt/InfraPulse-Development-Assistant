@@ -7,7 +7,6 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
 CONFIG_FILE="$ROOT_DIR/config/discord.conf"
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
@@ -20,10 +19,11 @@ source "$CONFIG_FILE"
 
 MESSAGE="${1:-InfraPulse Alert}"
 
-RESPONSE=$(curl -s \
+PAYLOAD=$(printf '{"content":"%s"}' "$MESSAGE")
+
+curl -fsS \
     -H "Content-Type: application/json" \
-    -X POST \
-    -d "{\"content\":\"$MESSAGE\"}" \
-    "$DISCORD_WEBHOOK_URL")
+    -d "$PAYLOAD" \
+    "$WEBHOOK_URL" >/dev/null
 
 echo "Discord notification sent."

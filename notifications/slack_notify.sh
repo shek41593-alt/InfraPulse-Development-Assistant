@@ -7,7 +7,6 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
 CONFIG_FILE="$ROOT_DIR/config/slack.conf"
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
@@ -20,10 +19,12 @@ source "$CONFIG_FILE"
 
 MESSAGE="${1:-InfraPulse Alert}"
 
-curl -s \
+PAYLOAD=$(printf '{"text":"%s"}' "$MESSAGE")
+
+curl -fsS \
     -X POST \
     -H "Content-Type: application/json" \
-    --data "{\"text\":\"$MESSAGE\"}" \
+    -d "$PAYLOAD" \
     "$SLACK_WEBHOOK_URL" >/dev/null
 
 echo "Slack notification sent."
