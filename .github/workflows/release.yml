@@ -1,0 +1,46 @@
+name: InfraPulse Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -f docker/Dockerfile \
+            -t infrapulse:${GITHUB_REF_NAME} .
+
+      - name: Save Docker Image
+        run: |
+          mkdir -p release
+          docker save infrapulse:${GITHUB_REF_NAME} \
+            | gzip > release/infrapulse-${GITHUB_REF_NAME}.tar.gz
+
+      - name: Generate SHA256 Checksum
+        run: |
+          sha256sum release/infrapulse-${GITHUB_REF_NAME}.tar.gz \
+            > release/SHA256SUMS.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/infrapulse-${GITHUB_REF_NAME}.tar.gz
+            release/SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
