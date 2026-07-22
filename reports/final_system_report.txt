@@ -1,0 +1,84 @@
+==========================================
+        InfraPulse Consolidated Report
+Generated: Wed Jul 22 02:45:08 PM IST 2026
+==========================================
+
+========== LOCAL JSON REPORT ==========
+{
+    "report": {
+        "generated_at": "2026-07-22T11:30:01+05:30",
+        "hostname": "abhishek-HP-Pavilion-Laptop-14-ec1xxx",
+        "operating_system": "Ubuntu 24.04.4 LTS",
+        "kernel": "6.17.0-19-generic",
+        "uptime": "up 2 hours, 11 minutes",
+
+        "cpu": {
+            "usage_percent": 4
+        },
+
+        "memory": {
+            "usage_percent": 65
+        },
+
+        "disk": {
+            "usage_percent": 93
+        },
+
+        "network": {
+            "status": "Connected"
+        }
+    }
+}
+
+========== LOCAL CSV REPORT ===========
+Metric,Value
+Generated,Wed Jul 22 11:30:02 AM IST 2026
+Hostname,abhishek-HP-Pavilion-Laptop-14-ec1xxx
+Operating System,Ubuntu 24.04.4 LTS
+Kernel,6.17.0-19-generic
+Uptime,up 2 hours, 11 minutes
+CPU Usage (%),10
+Memory Usage (%),65
+Disk Usage (%),93
+Network,Connected
+
+====== REMOTE SERVER MONITORING =======
+==========================================
+     InfraPulse Remote Monitoring Report
+Generated: Wed Jul 22 02:41:47 PM IST 2026
+==========================================
+
+===========================================
+Host : localhost
+IP   : 10.77.126.250
+===========================================
+===========================================
+Monitoring Server : 10.77.126.250
+===========================================
+Welcome to Ubuntu 24.04.4 LTS (GNU/Linux 6.17.0-19-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+Expanded Security Maintenance for Applications is not enabled.
+
+321 updates can be applied immediately.
+263 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+22 additional security updates can be applied with ESM Apps.
+Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+
+Hostname : abhishek-HP-Pavilion-Laptop-14-ec1xxx
+Operating System : Ubuntu 24.04.4 LTS
+Kernel : 6.17.0-19-generic
+CPU Usage : 1%
+Memory Usage : 58%
+Disk Usage : 94%
+Uptime : up 5 hours, 23 minutes
+
+
+==========================================
+End of Report
+==========================================

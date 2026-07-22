@@ -1,0 +1,35 @@
+==========================================
+     InfraPulse Remote Monitoring Report
+Generated: Wed Jul 22 02:41:47 PM IST 2026
+==========================================
+
+===========================================
+Host : localhost
+IP   : 10.77.126.250
+===========================================
+===========================================
+Monitoring Server : 10.77.126.250
+===========================================
+Welcome to Ubuntu 24.04.4 LTS (GNU/Linux 6.17.0-19-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+Expanded Security Maintenance for Applications is not enabled.
+
+321 updates can be applied immediately.
+263 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+22 additional security updates can be applied with ESM Apps.
+Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+
+Hostname : abhishek-HP-Pavilion-Laptop-14-ec1xxx
+Operating System : Ubuntu 24.04.4 LTS
+Kernel : 6.17.0-19-generic
+CPU Usage : 1%
+Memory Usage : 58%
+Disk Usage : 94%
+Uptime : up 5 hours, 23 minutes
+

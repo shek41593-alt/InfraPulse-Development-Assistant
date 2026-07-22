@@ -6,9 +6,13 @@ FROM ubuntu:24.04
 
 LABEL maintainer="Abhishek"
 LABEL project="InfraPulse"
+LABEL description="InfraPulse - Linux Monitoring and Automation Toolkit"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# ----------------------------------------------------------
+# Install Required Packages
+# ----------------------------------------------------------
 RUN apt-get update && apt-get install -y \
     bash \
     procps \
@@ -20,20 +24,42 @@ RUN apt-get update && apt-get install -y \
     cron \
     jq \
     bc \
-    && apt-get clean
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
+# ----------------------------------------------------------
+# Application Directory
+# ----------------------------------------------------------
 WORKDIR /opt/infrapulse
 
+# ----------------------------------------------------------
+# Copy Project Files
+# ----------------------------------------------------------
 COPY . .
 
-RUN chmod +x install.sh || true
-RUN chmod +x uninstall.sh || true
+# ----------------------------------------------------------
+# Copy Entrypoint
+# ----------------------------------------------------------
+COPY docker/entrypoint.sh /entrypoint.sh
 
-RUN find monitoring -name "*.sh" -exec chmod +x {} \;
-RUN find dashboard -name "*.sh" -exec chmod +x {} \;
-RUN find reports -name "*.sh" -exec chmod +x {} \;
-RUN find notifications -name "*.sh" -exec chmod +x {} \;
-RUN find automation -name "*.sh" -exec chmod +x {} \;
-RUN find multiserver -name "*.sh" -exec chmod +x {} \;
+# ----------------------------------------------------------
+# Make Scripts Executable
+# ----------------------------------------------------------
+RUN chmod +x /entrypoint.sh && \
+    chmod +x install.sh || true && \
+    chmod +x uninstall.sh || true && \
+    find monitoring -type f -name "*.sh" -exec chmod +x {} \; && \
+    find dashboard -type f -name "*.sh" -exec chmod +x {} \; && \
+    find reports -type f -name "*.sh" -exec chmod +x {} \; && \
+    find notifications -type f -name "*.sh" -exec chmod +x {} \; && \
+    find automation -type f -name "*.sh" -exec chmod +x {} \; && \
+    find multiserver -type f -name "*.sh" -exec chmod +x {} \;
 
+# ----------------------------------------------------------
+# Entrypoint
+# ----------------------------------------------------------
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default container command
 CMD ["bash"]

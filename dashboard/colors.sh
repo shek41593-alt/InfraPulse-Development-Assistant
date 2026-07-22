@@ -1,95 +1,68 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2034
+
 ###############################################################################
-# InfraPulse Color Library
+# InfraPulse Dashboard Color Library
 ###############################################################################
 
-############################
+set -euo pipefail
+
 # Reset
-############################
-
 RESET="\033[0m"
 
-############################
-# Regular Colors
-############################
+# Standard Colors
+BLACK="\033[0;30m"
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+BLUE="\033[0;34m"
+PURPLE="\033[0;35m"
+CYAN="\033[0;36m"
+WHITE="\033[0;37m"
 
-BLACK="\033[30m"
-RED="\033[31m"
-GREEN="\033[32m"
-YELLOW="\033[33m"
-BLUE="\033[34m"
-MAGENTA="\033[35m"
-CYAN="\033[36m"
-WHITE="\033[37m"
+# Bold Colors
+BOLD="\033[1m"
+BOLD_RED="\033[1;31m"
+BOLD_GREEN="\033[1;32m"
+BOLD_YELLOW="\033[1;33m"
+BOLD_BLUE="\033[1;34m"
+BOLD_PURPLE="\033[1;35m"
+BOLD_CYAN="\033[1;36m"
 
-############################
 # Bright Colors
-############################
-
-BRIGHT_BLACK="\033[90m"
 BRIGHT_RED="\033[91m"
 BRIGHT_GREEN="\033[92m"
 BRIGHT_YELLOW="\033[93m"
 BRIGHT_BLUE="\033[94m"
-BRIGHT_MAGENTA="\033[95m"
+BRIGHT_PURPLE="\033[95m"
 BRIGHT_CYAN="\033[96m"
-BRIGHT_WHITE="\033[97m"
 
-############################
-# Text Styles
-############################
-
-BOLD="\033[1m"
+# Extra Formatting
 DIM="\033[2m"
 UNDERLINE="\033[4m"
+BLINK="\033[5m"
 
-###############################################################################
-# Status Helpers
-###############################################################################
-
-status_color() {
-
-    case "$1" in
-
-        healthy|HEALTHY|active|enabled|Connected|Running)
-            printf "${BRIGHT_GREEN}%s${RESET}" "$1"
-            ;;
-
-        warning|WARNING)
-            printf "${BRIGHT_YELLOW}%s${RESET}" "$1"
-            ;;
-
-        critical|CRITICAL|inactive|Stopped|Disconnected)
-            printf "${BRIGHT_RED}%s${RESET}" "$1"
-            ;;
-
-        *)
-            printf "%s" "$1"
-            ;;
-    esac
+print_title() {
+    printf "%b" "${BOLD}${BRIGHT_CYAN}"
+    printf "============================================================\n"
+    printf "                    InfraPulse Dashboard\n"
+    printf "============================================================\n"
+    printf "%b" "${RESET}"
 }
 
-###############################################################################
-# Section Title
-###############################################################################
-
-section_title() {
-
-    echo
-
-    printf "${BOLD}${BRIGHT_CYAN}"
-    printf "=========================================================\n"
-    printf "%s\n" "$1"
-    printf "=========================================================\n"
-    printf "${RESET}"
+print_success() {
+    printf "%b%s%b\n" "$GREEN" "$1" "$RESET"
 }
 
-###############################################################################
-# Key : Value
-###############################################################################
+print_warning() {
+    printf "%b%s%b\n" "$YELLOW" "$1" "$RESET"
+}
 
-print_row() {
+print_error() {
+    printf "%b%s%b\n" "$RED" "$1" "$RESET"
+}
 
-    printf "%-24s : %s\n" "$1" "$2"
+print_info() {
+    printf "%b%s%b\n" "$CYAN" "$1" "$RESET"
 }

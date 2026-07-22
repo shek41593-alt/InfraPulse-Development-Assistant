@@ -6,8 +6,6 @@ set -euo pipefail
 # InfraPulse Disk Monitoring Module
 # ==========================================
 
-WARNING_THRESHOLD=80
-CRITICAL_THRESHOLD=90
 
 echo "=============================================================="
 echo "                    DISK UTILIZATION"

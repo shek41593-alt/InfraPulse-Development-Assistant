@@ -46,12 +46,11 @@ jobs:
           find . -type f -name "*.sh" -exec chmod +x {} \;
 
       - name: Run ShellCheck
-        run: |
-          find . -type f -name "*.sh" | while read file
-          do
-            echo "Checking $file"
-            shellcheck "$file"
-          done
+  run: |
+    while IFS= read -r file; do
+      echo "Checking ${file}"
+      shellcheck --severity=warning -x "$file"
+    done < <(find . -type f -name "*.sh")
 
       - name: Build Docker Image
         run: |

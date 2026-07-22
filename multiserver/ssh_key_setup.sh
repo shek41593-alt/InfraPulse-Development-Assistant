@@ -50,7 +50,7 @@ do
     echo
     echo "Testing SSH connection..."
 
-    if ssh -T \
+    if ssh -n -T \
         -o BatchMode=yes \
         -o ConnectTimeout=5 \
         "${USER}@${IP}" "echo Connected" >/dev/null 2>&1

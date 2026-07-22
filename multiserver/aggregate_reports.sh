@@ -1,58 +1,59 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# ==========================================================
+###############################################################################
 # InfraPulse Report Aggregator
-# ==========================================================
+###############################################################################
+
+set -euo pipefail
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 LOCAL_JSON="$BASE_DIR/reports/infrapulse_report.json"
 LOCAL_CSV="$BASE_DIR/reports/infrapulse_report.csv"
-LOCAL_HTML="$BASE_DIR/reports/infrapulse_report.html"
 REMOTE_REPORT="$BASE_DIR/reports/remote_servers_report.txt"
 
 OUTPUT="$BASE_DIR/reports/final_system_report.txt"
 
-echo "==========================================" > "$OUTPUT"
-echo "        InfraPulse Consolidated Report" >> "$OUTPUT"
-echo "Generated: $(date)" >> "$OUTPUT"
-echo "==========================================" >> "$OUTPUT"
-echo "" >> "$OUTPUT"
+{
+    echo "=========================================="
+    echo "        InfraPulse Consolidated Report"
+    echo "Generated: $(date)"
+    echo "=========================================="
+    echo
 
-# ----------------------------------------------------
-# Local JSON Report
-# ----------------------------------------------------
+    # ----------------------------------------------------
+    # Local JSON Report
+    # ----------------------------------------------------
+    if [[ -f "$LOCAL_JSON" ]]; then
+        echo "========== LOCAL JSON REPORT =========="
+        cat "$LOCAL_JSON"
+        echo
+    fi
 
-if [ -f "$LOCAL_JSON" ]; then
-    echo "========== LOCAL JSON REPORT ==========" >> "$OUTPUT"
-    cat "$LOCAL_JSON" >> "$OUTPUT"
-    echo "" >> "$OUTPUT"
-fi
+    # ----------------------------------------------------
+    # Local CSV Report
+    # ----------------------------------------------------
+    if [[ -f "$LOCAL_CSV" ]]; then
+        echo "========== LOCAL CSV REPORT =========="
+        cat "$LOCAL_CSV"
+        echo
+    fi
 
-# ----------------------------------------------------
-# Local CSV Report
-# ----------------------------------------------------
+    # ----------------------------------------------------
+    # Remote Monitoring Report
+    # ----------------------------------------------------
+    if [[ -f "$REMOTE_REPORT" ]]; then
+        echo "====== REMOTE SERVER MONITORING ======"
+        cat "$REMOTE_REPORT"
+        echo
+    fi
 
-if [ -f "$LOCAL_CSV" ]; then
-    echo "========== LOCAL CSV REPORT ===========" >> "$OUTPUT"
-    cat "$LOCAL_CSV" >> "$OUTPUT"
-    echo "" >> "$OUTPUT"
-fi
+    echo "=========================================="
+    echo "End of Report"
+    echo "=========================================="
 
-# ----------------------------------------------------
-# Remote Monitoring Report
-# ----------------------------------------------------
-
-if [ -f "$REMOTE_REPORT" ]; then
-    echo "====== REMOTE SERVER MONITORING =======" >> "$OUTPUT"
-    cat "$REMOTE_REPORT" >> "$OUTPUT"
-    echo "" >> "$OUTPUT"
-fi
-
-echo "==========================================" >> "$OUTPUT"
-echo "End of Report" >> "$OUTPUT"
-echo "==========================================" >> "$OUTPUT"
+} > "$OUTPUT"
 
 echo
-echo "Consolidated report created:"
-echo "$OUTPUT"
+echo "Consolidated report created successfully."
+echo "Output: $OUTPUT"
