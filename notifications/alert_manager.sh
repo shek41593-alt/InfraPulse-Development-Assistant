@@ -1,69 +1,84 @@
 #!/bin/bash
 
 # ==========================================================
-# InfraPulse - Alert Manager
+# InfraPulse Alert Manager
 # ==========================================================
 
-CONFIG_FILE="config/alerts.conf"
+set -euo pipefail
 
-# Load alert configuration
-if [ -f "$CONFIG_FILE" ]; then
-    source "$CONFIG_FILE"
-else
-    echo "Alert configuration file not found!"
-    exit 1
-fi
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CONFIG_FILE="$BASE_DIR/config/alerts.conf"
 
-# -------------------------
-# Collect System Metrics
-# -------------------------
+# shellcheck source=/dev/null
+source "$CONFIG_FILE"
 
-CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print int($2+$4)}')
+CPU_SCRIPT="$BASE_DIR/monitoring/cpu_monitor.sh"
+MEMORY_SCRIPT="$BASE_DIR/monitoring/memory_monitor.sh"
+DISK_SCRIPT="$BASE_DIR/monitoring/disk_monitor.sh"
 
-MEMORY_USAGE=$(free | awk '/Mem:/ {printf("%.0f"), $3/$2 * 100}')
+SLACK_SCRIPT="$BASE_DIR/notifications/slack_notify.sh"
+DISCORD_SCRIPT="$BASE_DIR/notifications/discord_notify.sh"
+TELEGRAM_SCRIPT="$BASE_DIR/notifications/telegram_notify.sh"
+EMAIL_SCRIPT="$BASE_DIR/notifications/send_email.sh"
 
-DISK_USAGE=$(df / | awk 'NR==2 {gsub("%",""); print $5}')
+# ==========================================================
+# Collect Metrics
+# ==========================================================
 
-# -------------------------
-# Alert Function
-# -------------------------
+CPU_USAGE="$("$CPU_SCRIPT")"
+MEMORY_USAGE="$("$MEMORY_SCRIPT")"
+DISK_USAGE="$("$DISK_SCRIPT")"
+
+echo "========================================="
+echo "         InfraPulse Alert Manager"
+echo "========================================="
+echo "CPU Usage    : ${CPU_USAGE}%"
+echo "Memory Usage : ${MEMORY_USAGE}%"
+echo "Disk Usage   : ${DISK_USAGE}%"
+echo
+
+# ==========================================================
+# Send Notifications
+# ==========================================================
 
 send_alert() {
-    MESSAGE="$1"
 
-    echo "[ALERT] $MESSAGE"
+    local message="$1"
 
-    [ "$SLACK_ENABLED" = "true" ] && ./notifications/slack_notify.sh "$MESSAGE"
+    echo "ALERT: $message"
 
-    [ "$DISCORD_ENABLED" = "true" ] && ./notifications/discord_notify.sh "$MESSAGE"
+    if [[ "${SLACK_ENABLED}" == "true" && -x "$SLACK_SCRIPT" ]]; then
+        "$SLACK_SCRIPT" "$message"
+    fi
 
-    [ "$TELEGRAM_ENABLED" = "true" ] && ./notifications/telegram_notify.sh "$MESSAGE"
+    if [[ "${DISCORD_ENABLED}" == "true" && -x "$DISCORD_SCRIPT" ]]; then
+        "$DISCORD_SCRIPT" "$message"
+    fi
 
-    [ "$EMAIL_ENABLED" = "true" ] && ./notifications/send_email.sh "$MESSAGE"
+    if [[ "${TELEGRAM_ENABLED}" == "true" && -x "$TELEGRAM_SCRIPT" ]]; then
+        "$TELEGRAM_SCRIPT" "$message"
+    fi
+
+    if [[ "${EMAIL_ENABLED}" == "true" && -x "$EMAIL_SCRIPT" ]]; then
+        "$EMAIL_SCRIPT" "$message"
+    fi
 }
 
-# -------------------------
-# CPU Alert
-# -------------------------
+# ==========================================================
+# Threshold Checks
+# ==========================================================
 
-if [ "$CPU_USAGE" -ge "$CPU_THRESHOLD" ]; then
-    send_alert "🚨 CPU Usage is ${CPU_USAGE}% (Threshold: ${CPU_THRESHOLD}%)"
+if (( CPU_USAGE >= CPU_THRESHOLD )); then
+    send_alert "CPU usage is ${CPU_USAGE}% (Threshold: ${CPU_THRESHOLD}%)"
 fi
 
-# -------------------------
-# Memory Alert
-# -------------------------
-
-if [ "$MEMORY_USAGE" -ge "$MEMORY_THRESHOLD" ]; then
-    send_alert "🚨 Memory Usage is ${MEMORY_USAGE}% (Threshold: ${MEMORY_THRESHOLD}%)"
+if (( MEMORY_USAGE >= MEMORY_THRESHOLD )); then
+    send_alert "Memory usage is ${MEMORY_USAGE}% (Threshold: ${MEMORY_THRESHOLD}%)"
 fi
 
-# -------------------------
-# Disk Alert
-# -------------------------
-
-if [ "$DISK_USAGE" -ge "$DISK_THRESHOLD" ]; then
-    send_alert "🚨 Disk Usage is ${DISK_USAGE}% (Threshold: ${DISK_THRESHOLD}%)"
+if (( DISK_USAGE >= DISK_THRESHOLD )); then
+    send_alert "Disk usage is ${DISK_USAGE}% (Threshold: ${DISK_THRESHOLD}%)"
 fi
 
-echo "Alert scan completed."
+echo
+echo "Alert check completed."
