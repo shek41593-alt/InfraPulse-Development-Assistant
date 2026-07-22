@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  infrapulse:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+    container_name: infrapulse
+
+    hostname: infrapulse
+
+    restart: unless-stopped
+
+    tty: true
+
+    stdin_open: true
+
+    volumes:
+      - ../logs:/opt/infrapulse/logs
+      - ../reports:/opt/infrapulse/reports
+      - ../config:/opt/infrapulse/config
+
+    working_dir: /opt/infrapulse
+
+    command: bash
+
+    networks:
+      - infrapulse-network
+
+networks:
+  infrapulse-network:
+    driver: bridge
